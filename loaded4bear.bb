@@ -1,11 +1,7 @@
 /*
 TODO
  
- change ending from 2 points to 10!
- 
- look to put it online , java?
- 
- misc: website
+  put volume back up ;-) ( NORMAL_VOLUME=8)
 
 */ 
   dim musicPointer=a
@@ -44,7 +40,7 @@ TODO
 
   const font = whimsey
 
-
+  const NORMAL_VOLUME = 1
 
   const TIME_BETWEEN_ENDING_SCROLL = 8
 
@@ -131,7 +127,7 @@ _donefreakbear0
   if joy1fire then COLUP1 = BEAR_BLUE else COLUP1 = TREE_GREEN
 _donefreakbear1
 
-  if bear0freaktimer || bear1freaktimer then AUDV1 = 8: AUDF1 = rand else AUDV1 = 0
+  if bear0freaktimer || bear1freaktimer then AUDV1 = NORMAL_VOLUME: AUDF1 = rand else AUDV1 = 0
 
 
   rem BULLET SIZE (AND EVERY OTHER FRICKIN THING WHAT THE HECK)
@@ -411,7 +407,7 @@ _reset_music_
 changeMusicNote
   
   AUDF0 = musicData[musicPointer]
-  if musicData[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = 8
+  if musicData[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = NORMAL_VOLUME
   musicPointer = musicPointer + 1
   musicTimer = musicData[musicPointer]
   rem value is (2 * #_OF_NOTES) - 1
@@ -423,7 +419,7 @@ changeMusicNote
 
 changeMusicNoteTitle
   AUDF0 = musicDataTitle[musicPointer]
-  if musicDataTitle[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = 8
+  if musicDataTitle[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = NORMAL_VOLUME
   musicPointer = musicPointer + 1
   musicTimer = musicDataTitle[musicPointer]
   rem value is (2 * #_OF_NOTES) - 1
@@ -434,7 +430,7 @@ changeMusicNoteTitle
 
 changeBeatNoteTitle  
   AUDF1 = beatDataTitle[beatPointer]
-  if beatDataTitle[beatPointer] = $FF then AUDV1 = 0 else AUDV1 = 8
+  if beatDataTitle[beatPointer] = $FF then AUDV1 = 0 else AUDV1 = NORMAL_VOLUME
   beatPointer = beatPointer + 1
   beatTimer = beatDataTitle[beatPointer]
   rem value is (2 * #_OF_NOTES) - 1
@@ -446,7 +442,7 @@ changeMusicNoteVictory
   
   AUDF0 = musicDataVictory[musicPointer]
 
-  if musicDataVictory[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = 8
+  if musicDataVictory[musicPointer] = $FF then AUDV0 = 0 else AUDV0 = NORMAL_VOLUME
 
   musicPointer = musicPointer + 1
   musicTimer = musicDataVictory[musicPointer]
@@ -459,7 +455,7 @@ changeMusicNoteVictory
 changeBeatNoteVictory
   
   AUDF1 = beatDataVictory[beatPointer]  
-  if beatDataVictory[beatPointer] = $FF then AUDV1 = 0 else AUDV1 = 8
+  if beatDataVictory[beatPointer] = $FF then AUDV1 = 0 else AUDV1 = NORMAL_VOLUME
   beatPointer = beatPointer + 1
   beatTimer = beatDataVictory[beatPointer]
   rem value is (2 * #_OF_NOTES) - 1
