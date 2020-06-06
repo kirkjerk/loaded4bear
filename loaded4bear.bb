@@ -16,32 +16,31 @@ TODO
   dim bear0leftright = e ; 
   dim bear1leftright = f ; 
   
-  dim bear0needsToRecharge = g;
-  dim bear1needsToRecharge = h;
-  
-  ;dim game_state_mode = i;
+  dim BunchOfFlags = g;
+
+  def bear0needsToRecharge=BunchOfFlags{0}
+  def bear1needsToRecharge=BunchOfFlags{1}
+  def game_is_finished = BunchOfFlags{2}
+
+  def bullet0wasfiring = BunchOfFlags{3}
+  def bullet1wasfiring = BunchOfFlags{4}
+
   const MODE_TITLE = 0
   const MODE_GAME = 1
   const MODE_END = 2
   
-  dim winnerbearcolor = j;
-  dim winningbeardir = k; 
+  dim winnerbearcolor = h;
+  dim winningbeardir = i; 
 
-  dim game_state_mode = m;
+  dim game_state_mode = j;
 
-  dim just_a_timer = n
+  dim just_a_timer = k
 
-  dim game_is_finished = o
+  dim bear0freaktimer = l
+  dim bear1freaktimer = m
 
-  
-
-  dim bullet0wasfiring = q
-  dim bullet1wasfiring = r
-  dim bear0freaktimer = s
-  dim bear1freaktimer = t
-
-  dim walkingframe0 = x
-  dim walkingframe1 = y
+  dim walkingframe0 = n
+  dim walkingframe1 = o
 
   const font = whimsey
 
