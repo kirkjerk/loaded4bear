@@ -5,6 +5,9 @@ TODO
   look to see if there's a more effecient way of copying over joystick
 
 */ 
+
+
+
   dim musicPointer=a
   dim musicTimer=b
   dim beatPointer=c
@@ -22,7 +25,8 @@ TODO
   def bullet0wasfiring = BunchOfFlags{3}
   def bullet1wasfiring = BunchOfFlags{4}
 
-
+  def cpu_in_control = BunchOfFlags{5}
+  def already_switched_cpu = BunchOfFlags{6}
 
   const MODE_TITLE = 0
   const MODE_GAME = 1
@@ -41,12 +45,12 @@ TODO
   dim walkingframe0 = n
   dim walkingframe1 = o
 
-  dim otherbearcontrol = p
-  def otherbear_j1fire = otherbearcontrol{0}
-  def otherbear_j1up = otherbearcontrol{1}
-  def otherbear_j1down = otherbearcontrol{2}
-  def otherbear_j1left = otherbearcontrol{3}
-  def otherbear_j1right = otherbearcontrol{4}
+  dim otherbearjoystick = p
+  def otherbear_j1fire = otherbearjoystick{0}
+  def otherbear_j1up = otherbearjoystick{1}
+  def otherbear_j1down = otherbearjoystick{2}
+  def otherbear_j1left = otherbearjoystick{3}
+  def otherbear_j1right = otherbearjoystick{4}
 
 
   dim cpu_mood_counter = q
@@ -57,16 +61,12 @@ TODO
 
   const font = whimsey
 
-  const NORMAL_VOLUME = 1
+  const NORMAL_VOLUME = 8
 
   const TIME_BETWEEN_ENDING_SCROLL = 8
 
   const REFLECTLEFT = 8
   const REFLECTRIGHT = 0
-  const MYLEFT = 1
-  const MYRIGHT = 2
-  const MYUP = 3
-  const MYDOWN = 4
   
   const BEAR_BROWN = 32
   const BEAR_BLUE = 112
@@ -77,8 +77,6 @@ TODO
   missile0height = 4
   missile1height = 4
   
-  
-
   player0scorecolor = BEAR_BROWN
   player1scorecolor = BEAR_BLUE
   
@@ -87,8 +85,12 @@ TODO
 
   CTRLPF = 5 ; put players behind
 
+  
+
    rem  *  Clears all normal variables.
    for temp5 = 0 to 25 : a[temp5] = 0 : next
+
+  cpu_in_control = 1
 
  goto __init_titlescreen__
 
@@ -124,7 +126,33 @@ _main_title_
  if beatTimer = 0 then gosub changeBeatNoteTitle
  beatTimer = beatTimer - 1
 
+  rem already_switched_cpu = BunchOfFlags{6} 
+  rem cpu_in_control = BunchOfFlags{5} 
+  
+  
+  rem if !switchselect then already_switched_cpu = 0 else goto _done_handling_switch_down_
+  if !switchselect then already_switched_cpu = 0 : goto _done_handling_switch_down_
+  if already_switched_cpu then goto _done_handling_switch_down_
+  
+  BunchOfFlags{5} = !BunchOfFlags{5}
+  already_switched_cpu = 1
+_done_handling_switch_down_
+  player0x = 44 : player0y = 52
+  player1x = 104 : player1y = 52
 
+  gosub _frame0_for_0_
+  
+  
+
+  rem 
+  rem serious weirdness, colors were messed up when I changed them before gosub to set player???
+  
+  if cpu_in_control then gosub _frame_fuji_for_1_ else gosub _frame1_for_1_
+  
+  COLUP0 = BEAR_BROWN
+  COLUP1 = BEAR_BLUE
+  REFP0 = 0
+  REFP1 = 8
   drawscreen
   
   if joy0fire || joy1fire then goto __init_game__
@@ -134,18 +162,16 @@ _main_title_
 
 _main_game_
 
-  otherbearcontrol = 0
+  otherbearjoystick = 0
 
-  goto _cpuBearControl
-
-
+  if cpu_in_control goto _cpuBearControl
 
   if joy1fire then otherbear_j1fire = 1
   if joy1leftj then otherbear_j1left = 1
   if joy1right then otherbear_j1right = 1
   if joy1up then otherbear_j1up = 1
   if joy1down then otherbear_j1down = 1
-
+  goto _endPlayer1Move
 _cpuBearControl
 
   if cpu_mood_counter <> 0 then goto _dontchangemood
@@ -418,6 +444,8 @@ end
  
 __init_titlescreen__
 
+  rem we always come back to here after a game
+  rem so it's good for resetting everything
 
   cpu_mood_counter = 0
 
@@ -440,9 +468,7 @@ end
   COLUPF = TREE_GREEN
 
   game_state_mode = MODE_TITLE
-  ;player0x = OFFSCREEN_POS : player0y = OFFSCREEN_POS
-  ;player1x = OFFSCREEN_POS : player1y = OFFSCREEN_POS
-
+  
   gosub _reset_music_ 
   AUDC0=1
   AUDC1=8
@@ -616,6 +642,16 @@ _frame1_for_1_
         %00100100
 end  
   return
+
+_frame_fuji_for_1_
+  player1:
+        %10010010
+        %01010100
+        %00101000
+        %00101000
+        %00101000
+        %00101000
+end
 
  rem should be last lines in game  
  inline playerscores.asm
