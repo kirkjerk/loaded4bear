@@ -1,8 +1,10 @@
 /*
 TODO
- 
-  put volume back up ;-) ( NORMAL_VOLUME=8)
-  look to see if there's a more effecient way of copying over joystick
+
+AI badge
+double up the dude
+
+defeat screen
 
 */ 
 
@@ -84,7 +86,9 @@ TODO
   walkingframe0 = 0
   walkingframe1 = 0
 
-  CTRLPF = 5 ; put players behind
+  const PLAYERSINFRONT = 1
+  const PLAYERSBEHIND = 5
+  
 
   
 
@@ -138,20 +142,30 @@ _main_title_
   BunchOfFlags{5} = !BunchOfFlags{5}
   already_switched_cpu = 1
 _done_handling_switch_down_
-  player0x = 44 : player0y = 52
-  player1x = 104 : player1y = 51
+  player0x = 44 : player0y = 87
+  player1x = 116 : player1y = 85
 
-  gosub _frame0_for_0_
-  
+  /* gosub _frame0_for_0_ */
+  if walkingframe1 = 0 then gosub _frame0_for_0_
+  if walkingframe1 = 10 then gosub _frame1_for_0_
+  if walkingframe0 > 19 then walkingframe0 = 0
+
+  walkingframe0 = walkingframe0 + 1
+
+  gosub _frame_ai_for_1_
   rem 
   rem serious weirdness, colors were messed up when I changed them before gosub to set player???
   
-  if cpu_in_control then gosub _frame_fuji_for_1_ else gosub _frame1_for_1_
+  if cpu_in_control then NUSIZ0 = $00 else NUSIZ0 = $01
+  
+  NUSIZ1 = $07
   
   COLUP0 = BEAR_BROWN
-  COLUP1 = BEAR_BLUE
-  REFP0 = 0
-  REFP1 = 8
+  COLUP1 = $DC
+  REFP0 = REFLECTRIGHT
+  REFP1 = REFLECTRIGHT
+
+  playfieldpos = 8
   drawscreen
   
   if joy0fire || joy1fire then goto __init_game__
@@ -373,6 +387,7 @@ __init_game__
 end
   game_state_mode = MODE_GAME
 
+  CTRLPF = PLAYERSBEHIND
 
   player0score = 0
   player1score = 0
@@ -445,8 +460,9 @@ __init_titlescreen__
   cpu_mood = CPU_FIRE
   cpu_mood_counter = 0
 
+  CTRLPF = PLAYERSINFRONT
+
   playfield:
-  ...............................
   X....XX...X..XX..XXX.XX....X.X.
   X...X..X.X.X.X.X.X...X.X...X.X.
   X...X..X.XXX.X.X.XX..X.X...XXXX
@@ -457,7 +473,6 @@ __init_titlescreen__
   XXXXXX...XXXX...XXXXXX..XXXXX..
   XXX...X..XX.....XX..XX..XX..XX.
   XXXXXX...XXXXX..XX..XX..XX...XX
-  ...............................
 end
 
 
@@ -639,14 +654,16 @@ _frame1_for_1_
 end  
   return
 
-_frame_fuji_for_1_
+_frame_ai_for_1_
   player1:
+        %10010111
         %10010010
-        %01010100
-        %00101000
-        %00101000
-        %00101000
-        %00101000
+        %10010010
+        %11110010
+        %10010010
+        %10010010
+        %10010010
+        %01100111
 end
 
  rem should be last lines in game  
