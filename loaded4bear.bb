@@ -2,6 +2,7 @@
 TODO
  
   put volume back up ;-) ( NORMAL_VOLUME=8)
+  look to see if there's a more effecient way of copying over joystick
 
 */ 
   dim musicPointer=a
@@ -21,6 +22,8 @@ TODO
   def bullet0wasfiring = BunchOfFlags{3}
   def bullet1wasfiring = BunchOfFlags{4}
 
+
+
   const MODE_TITLE = 0
   const MODE_GAME = 1
   const MODE_END = 2
@@ -37,6 +40,13 @@ TODO
 
   dim walkingframe0 = n
   dim walkingframe1 = o
+
+  dim otherbearcontrol = p
+  def otherbear_j1fire = otherbearcontrol{0}
+  def otherbear_j1up = otherbearcontrol{1}
+  def otherbear_j1down = otherbearcontrol{2}
+  def otherbear_j1left = otherbearcontrol{3}
+  def otherbear_j1right = otherbearcontrol{4}
 
   const font = whimsey
 
@@ -117,6 +127,12 @@ _main_title_
 
 _main_game_
 
+  otherbearcontrol = 0
+  if joy1fire then otherbear_j1fire = 1
+  if joy1leftj then otherbear_j1left = 1
+  if joy1right then otherbear_j1right = 1
+  if joy1up then otherbear_j1up = 1
+  if joy1down then otherbear_j1down = 1
 
 
   if bear0freaktimer > 0 then bear0freaktimer = bear0freaktimer - 1 : COLUP0 = rand: goto _donefreakbear0
@@ -124,7 +140,7 @@ _main_game_
 _donefreakbear0
 
   if bear1freaktimer > 0 then bear1freaktimer = bear1freaktimer - 1 : COLUP1 = rand: goto _donefreakbear1
-  if joy1fire then COLUP1 = BEAR_BLUE else COLUP1 = TREE_GREEN
+  if otherbear_j1fire then COLUP1 = BEAR_BLUE else COLUP1 = TREE_GREEN
 _donefreakbear1
 
   if bear0freaktimer || bear1freaktimer then AUDV1 = NORMAL_VOLUME: AUDF1 = rand else AUDV1 = 0
@@ -137,8 +153,8 @@ _donefreakbear1
   if joy0left then bear0leftright = REFLECTLEFT  
   if joy0right then bear0leftright = REFLECTRIGHT
 
-  if joy1left then bear1leftright = REFLECTLEFT 
-  if joy1right then bear1leftright = REFLECTRIGHT 
+  if otherbear_j1left then bear1leftright = REFLECTLEFT 
+  if otherbear_j1right then bear1leftright = REFLECTRIGHT 
 
   REFP0 = bear0leftright
   REFP1 = bear1leftright
@@ -171,16 +187,16 @@ _done_with_bullet0_
 
 _dont_steer_bullet0_
 
-  if ! joy1fire then goto _no_bullet1_
+  if ! otherbear_j1fire then goto _no_bullet1_
     if bullet1wasfiring then goto _just_move_bullet1_      
 _just_move_bullet1_
     bullet1wasfiring = 1
     goto _done_with_bullet1_
 _no_bullet1_
-  if joy1right then player1x = player1x + 1 
-  if joy1left then player1x = player1x - 1 
-  if joy1up then player1y = player1y - 1 : pfscroll down 
-  if joy1down then player1y = player1y + 1 : pfscroll up
+  if otherbear_j1right then player1x = player1x + 1 
+  if otherbear_j1left then player1x = player1x - 1 
+  if otherbear_j1up then player1y = player1y - 1 : pfscroll down 
+  if otherbear_j1down then player1y = player1y + 1 : pfscroll up
   bear1needsToRecharge = 0
     missile1x = player1x
     missile1y = player1y
@@ -189,10 +205,10 @@ _done_with_bullet1_
 
   if ! bullet1wasfiring then goto _dont_steer_bullet1_
   if bear1needsToRecharge then missile1x = OFFSCREEN_POS : missile1y = OFFSCREEN_POS : goto _dont_steer_bullet1_
-    if joy1right then missile1x = missile1x + 1 
-    if joy1left then missile1x = missile1x - 1 
-    if joy1up then missile1y = missile1y - 1  
-    if joy1down then missile1y = missile1y + 1    
+    if otherbear_j1right then missile1x = missile1x + 1 
+    if otherbear_j1left then missile1x = missile1x - 1 
+    if otherbear_j1up then missile1y = missile1y - 1  
+    if otherbear_j1down then missile1y = missile1y + 1    
 
 _dont_steer_bullet1_
 
@@ -227,7 +243,7 @@ _done_bullet_boundary_1
  
  
   if collision(player1, missile0) && joy0fire && ! bear1freaktimer then bear1freaktimer = 30 : missile0x = player0x : missile0y = player0y : bear0needsToRecharge = 1 : player0score = addbcd(player0score, 1)
-  if collision(player0, missile1) && joy1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1)
+  if collision(player0, missile1) && otherbear_j1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1)
 
 
   
