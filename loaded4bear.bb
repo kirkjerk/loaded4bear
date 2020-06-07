@@ -56,8 +56,9 @@ TODO
   dim cpu_mood_counter = q
   dim cpu_mood = r
 
-  const CPU_RUN = 1
+  const CPU_CHASE = 1
   const CPU_FIRE = 2
+  const CPU_RAMBLE = 3
 
   const font = whimsey
 
@@ -138,12 +139,10 @@ _main_title_
   already_switched_cpu = 1
 _done_handling_switch_down_
   player0x = 44 : player0y = 52
-  player1x = 104 : player1y = 52
+  player1x = 104 : player1y = 51
 
   gosub _frame0_for_0_
   
-  
-
   rem 
   rem serious weirdness, colors were messed up when I changed them before gosub to set player???
   
@@ -167,28 +166,30 @@ _main_game_
   if cpu_in_control goto _cpuBearControl
 
   if joy1fire then otherbear_j1fire = 1
-  if joy1leftj then otherbear_j1left = 1
+  if joy1left then otherbear_j1left = 1
   if joy1right then otherbear_j1right = 1
   if joy1up then otherbear_j1up = 1
   if joy1down then otherbear_j1down = 1
   goto _endPlayer1Move
 _cpuBearControl
-
-  if cpu_mood_counter <> 0 then goto _dontchangemood
-  if cpu_mood = CPU_RUN then cpu_mood = CPU_FIRE else cpu_mood = CPU_RUN
-_dontchangemood
-  if cpu_mood_counter = 0 then cpu_mood_counter = rand  
+  if cpu_mood = CPU_FIRE then otherbear_j1fire = 1
+  if cpu_mood_counter <> 0 then goto _keepdoingwhatyourdoing
+  rem cpu mood counter is at zero ,
+  if cpu_mood = CPU_CHASE then cpu_mood = CPU_FIRE : goto _donechangemood
+  if cpu_mood = CPU_FIRE then cpu_mood = CPU_CHASE : goto _donechangemood
+  
+_donechangemood
+  cpu_mood_counter = rand / 4
+_keepdoingwhatyourdoing
   cpu_mood_counter = cpu_mood_counter - 1  
 
-  /* if cpu_mood = CPU_FIRE then goto _endPlayer1Move */
-
+_cpuSteerTowards
   if player1x > player0x then otherbear_j1left = 1
   if player1x < player0x then otherbear_j1right = 1
   if player1y > player0y then otherbear_j1up = 1
   if player1y < player0y then otherbear_j1down = 1
 
 _endPlayer1Move
-  if cpu_mood = CPU_FIRE then otherbear_j1fire = 1
 
   if bear0freaktimer > 0 then bear0freaktimer = bear0freaktimer - 1 : COLUP0 = rand: goto _donefreakbear0
   if joy0fire then COLUP0 = BEAR_BROWN else COLUP0 = TREE_GREEN
@@ -218,7 +219,7 @@ _donefreakbear1
   
 
   if ! joy0fire then goto _no_bullet0_
-    if bullet0wasfiring then goto _just_move_bullet0_   
+    rem if bullet0wasfiring then goto _just_move_bullet0_   
 _just_move_bullet0_
     bullet0wasfiring = 1
     goto _done_with_bullet0_
@@ -233,15 +234,15 @@ _no_bullet0_
     bullet0wasfiring = 0
 _done_with_bullet0_
 
-  if ! bullet0wasfiring then goto _dont_steer_bullet0_
-  if bear0needsToRecharge then missile0x = OFFSCREEN_POS : missile0y = OFFSCREEN_POS : goto _dont_steer_bullet0_
+  if ! bullet0wasfiring then goto _done_steering_bullet0_
+  if bear0needsToRecharge then missile0x = OFFSCREEN_POS : missile0y = OFFSCREEN_POS : goto _done_steering_bullet0_
     
     if joy0right then missile0x = missile0x + 1 
     if joy0left then missile0x = missile0x - 1 
     if joy0up then missile0y = missile0y - 1  
     if joy0down then missile0y = missile0y + 1  
 
-_dont_steer_bullet0_
+_done_steering_bullet0_
 
 
   
@@ -264,15 +265,15 @@ _done_with_bullet1_
 
 
 
-  if ! bullet1wasfiring then goto _dont_steer_bullet1_
-  if bear1needsToRecharge then missile1x = OFFSCREEN_POS : missile1y = OFFSCREEN_POS : goto _dont_steer_bullet1_
+  if ! bullet1wasfiring then goto _done_steering_bullet1_
+  if bear1needsToRecharge then missile1x = OFFSCREEN_POS : missile1y = OFFSCREEN_POS : goto _done_steering_bullet1_
         
     if otherbear_j1right then missile1x = missile1x + 1 
     if otherbear_j1left then missile1x = missile1x - 1 
     if otherbear_j1up then missile1y = missile1y - 1  
     if otherbear_j1down then missile1y = missile1y + 1    
 
-_dont_steer_bullet1_
+_done_steering_bullet1_
 
 
   rem PLAYER BOUNDARIES
@@ -304,8 +305,8 @@ _done_bullet_boundary_1
  
  
  
-  if collision(player1, missile0) &&         joy0fire && ! bear1freaktimer then bear1freaktimer = 30 : missile0x = player0x : missile0y = player0y : bear0needsToRecharge = 1 : player0score = addbcd(player0score, 1)
-  if collision(player0, missile1) && otherbear_j1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1)
+  if collision(player1, missile0) &&         joy0fire && ! bear1freaktimer then bear1freaktimer = 30 : missile0x = player0x : missile0y = player0y : bear0needsToRecharge = 1 : player0score = addbcd(player0score, 1) : cpu_mood_counter = 0
+  if collision(player0, missile1) && otherbear_j1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1) : cpu_mood_counter = 0
 
 
   
@@ -402,20 +403,15 @@ end
  goto main
  
 __init_endscreen__
-
+  pfclear
   playfield: 
   ................................
   ................................
   ................................
-  ................................
-  XXX.XXX.XXX.X.X.XX.XX.XX..X.X.X.
-  .X..X.X..X..X.X.X.X.X.X.X.X.X.X.
-  .X..XX...X..X.X.X.X.X.XX..XXX...
-  .X..X.X.XXX.XXX.X...X.X...X.X.X.
-  ................................
-  ................................
-  ................................
-  ................................
+  X.....X.X..XX.XXX..X..XXX.X.X.X.
+  .X...X..X.X....X..X.X.X.X.X.X.X.
+  ..X.X...X.X....X..X.X.XX...X....
+  ...X....X..XX..X...X..X.X..X..X.
 end
   game_state_mode = MODE_END
 
@@ -446,7 +442,7 @@ __init_titlescreen__
 
   rem we always come back to here after a game
   rem so it's good for resetting everything
-
+  cpu_mood = CPU_FIRE
   cpu_mood_counter = 0
 
   playfield:
