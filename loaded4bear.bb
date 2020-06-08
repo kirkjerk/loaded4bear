@@ -314,8 +314,9 @@ _done_bullet_boundary_1
 
   
   if game_is_finished then goto _done_with_endgame_check_
-  if player0score > 9 then winnerbearcolor = BEAR_BROWN : game_is_finished = 1
-  if player1score > 9 then winnerbearcolor = BEAR_BLUE : game_is_finished = 1
+  if player0score > 9 then  game_is_finished = 1
+  if player1score > 9 then game_is_finished = 1
+  if player0score >= player1score then winnerbearcolor = BEAR_BROWN else winnerbearcolor = BEAR_BLUE
 _done_with_endgame_check_  
   if ! game_is_finished then goto _not_ending_game_now_
   if bear0freaktimer || bear1freaktimer then goto _not_ending_game_now_
@@ -410,7 +411,7 @@ __init_endscreen__
   pfclear
 
   if !cpu_in_control then goto _victoryPlayField
-  if player0score > player1score then goto _victoryPlayField
+  if player0score >= player1score then goto _victoryPlayField
 
 
   rem YOU LOSE!
