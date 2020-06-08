@@ -206,11 +206,11 @@ _cpuSteerTowards
 _endPlayer1Move
 
   if bear0freaktimer > 0 then bear0freaktimer = bear0freaktimer - 1 : COLUP0 = rand: goto _donefreakbear0
-  if joy0fire then COLUP0 = BEAR_BROWN else COLUP0 = TREE_GREEN
+  if joy0fire || cpu_in_control then COLUP0 = BEAR_BROWN else COLUP0 = TREE_GREEN
 _donefreakbear0
 
   if bear1freaktimer > 0 then bear1freaktimer = bear1freaktimer - 1 : COLUP1 = rand: goto _donefreakbear1
-  if otherbear_j1fire then COLUP1 = BEAR_BLUE else COLUP1 = TREE_GREEN
+  if otherbear_j1fire || cpu_in_control then COLUP1 = BEAR_BLUE else COLUP1 = TREE_GREEN
 _donefreakbear1
 
   if bear0freaktimer || bear1freaktimer then AUDV1 = NORMAL_VOLUME: AUDF1 = rand else AUDV1 = 0
