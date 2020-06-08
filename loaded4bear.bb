@@ -319,8 +319,8 @@ _done_bullet_boundary_1
  
  
  
-  if collision(player1, missile0) &&         joy0fire && ! bear1freaktimer then bear1freaktimer = 30 : missile0x = player0x : missile0y = player0y : bear0needsToRecharge = 1 : player0score = addbcd(player0score, 1) : cpu_mood_counter = 0
-  if collision(player0, missile1) && otherbear_j1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1) : cpu_mood_counter = 0
+  if collision(player1, missile0) &&         joy0fire && ! bear1freaktimer then bear1freaktimer = 30 : missile0x = player0x : missile0y = player0y : bear0needsToRecharge = 1 : player0score = addbcd(player0score, 1)
+  if collision(player0, missile1) && otherbear_j1fire && ! bear0freaktimer then bear0freaktimer = 30 : missile1x = player1x : missile1y = player1y : bear1needsToRecharge = 1 : player1score = addbcd(player1score, 1)
 
 
   
@@ -443,10 +443,10 @@ _victoryPlayField
   ................................
   ................................
   ................................
-  X.....X.X..XX.XXX..X..XXX.X.X.X.
-  .X...X..X.X....X..X.X.X.X.X.X.X.
-  ..X.X...X.X....X..X.X.XX...X....
-  ...X....X..XX..X...X..X.X..X..X.
+  X.....X.X..XX.XXX..XX..XXX.X.X.X
+  .X...X..X.X....X..X..X.X.X.X.X.X
+  ..X.X...X.X....X..X..X.XX...X...
+  ...X....X..XX..X...XX..X.X..X..X
 end
 
 _endFinishPlayfields
