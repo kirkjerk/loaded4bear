@@ -1,14 +1,3 @@
-/*
-TODO
-
-AI badge
-double up the dude
-
-defeat screen
-
-*/ 
-
-
 
   dim musicPointer=a
   dim musicTimer=b
@@ -419,6 +408,25 @@ end
  
 __init_endscreen__
   pfclear
+
+  if !cpu_in_control then goto _victoryPlayField
+  if player0score > player1score then goto _victoryPlayField
+
+
+  rem YOU LOSE!
+  playfield: 
+  ................................
+  ................................
+  ................................
+  X...X..X..X.X..X....X...XX.XXX.X
+  .X.X..X.X.X.X..X...X.X.XX..X...X
+  ..X...X.X.X.X..X...X.X..XX.XX...
+  ..X....X..XXX..XXX..X..XX..XXX.X
+end
+  goto _endFinishPlayfields
+
+_victoryPlayField
+  rem VICTORY!
   playfield: 
   ................................
   ................................
@@ -428,6 +436,10 @@ __init_endscreen__
   ..X.X...X.X....X..X.X.XX...X....
   ...X....X..XX..X...X..X.X..X..X.
 end
+
+_endFinishPlayfields
+
+
   game_state_mode = MODE_END
 
   bear0leftright = REFLECTRIGHT  
