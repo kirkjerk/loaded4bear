@@ -18,6 +18,7 @@
 
   def cpu_in_control = BunchOfFlags{5}
   def already_switched_cpu = BunchOfFlags{6}
+  def already_switch_cpu_joystick = BunchOfFlags{7}
 
   const MODE_TITLE = 0
   const MODE_GAME = 1
@@ -124,6 +125,8 @@ _main_title_
   rem cpu_in_control = BunchOfFlags{5} 
   
   
+
+  
   rem if !switchselect then already_switched_cpu = 0 else goto _done_handling_switch_down_
   if !switchselect then already_switched_cpu = 0 : goto _done_handling_switch_down_
   if already_switched_cpu then goto _done_handling_switch_down_
@@ -131,6 +134,14 @@ _main_title_
   BunchOfFlags{5} = !BunchOfFlags{5}
   already_switched_cpu = 1
 _done_handling_switch_down_
+
+  if !joy0right then already_switch_cpu_joystick = 0: goto _done_handling_title_joystick_
+  if already_switch_cpu_joystick then goto _done_handling_title_joystick_
+
+  /* if joy0left then BunchOfFlags{5} = !BunchOfFlags{5}: already_switch_cpu_joystick = 1; */
+  if joy0right then BunchOfFlags{5} = !BunchOfFlags{5}: already_switch_cpu_joystick = 1;
+
+_done_handling_title_joystick_
   player0x = 44 : player0y = 87
   player1x = 116 : player1y = 85
 
